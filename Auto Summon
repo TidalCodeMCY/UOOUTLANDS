@@ -1,0 +1,982 @@
+// Variables to summon 0 is no summon 1 is tank and 2 is dps if you set only one summon to 1 or 2 it will summon 2 of that ele
+@setvar! summonEarthEle 0
+@setvar! summonDaemonEle 2
+@setvar! summonWaterEle 1
+@setvar! summonFireEle 0
+@setvar! summonAirEle 0
+@setvar! summonCreature 1
+
+// Wait Timers if you have Spirit Pact in Summoners tome you use the summonWaitTime if not use the other one.
+@setvar! summonWaitTime 2800
+@setvar! summonWaitNoBook 5200
+// Meditation Wait Timer
+@setvar! MedWaitTime 5000
+
+// These variables will choose which necro skills to use when summoning.
+@setvar! UseVengeful 1
+@setvar! UseWither 1
+
+
+
+#################################################################################################################
+#                             You Should Not Need To Change Anything After This Point.                          #
+#                                    If You Do You Could Break The Script!                                      #
+#################################################################################################################
+
+################################################################################################################
+// Creature Summon List
+removelist summCreatureList
+createlist summCreatureList
+
+clearignore 
+
+// Normal Creatures
+@pushlist summCreatureList 'an aegis rat'
+@pushlist summCreatureList 'a fire minion'
+@pushlist summCreatureList 'a primordial whelp'
+@pushlist summCreatureList 'a black bear'
+@pushlist summCreatureList 'a monitor hatchling'
+
+// Undead Creatures
+@pushlist summCreatureList 'a skeleton'
+@pushlist summCreatureList 'a ghoul'
+@pushlist summCreatureList 'a rotting flesh'
+@pushlist summCreatureList 'a zombie' 
+
+################################################################################################################
+// Open necro gump if not opened
+if not gumpexists 622436516 and skill "Necromancy" >= 50
+    say '[NecromancyHotbar'
+    overhead 'Necromancy Hotbar Opened!'
+    wait 500
+endif
+
+// This will add a second function if the button is pressed while good on followers I use it to click mushrooms and say all guard me.
+if followers = 5 
+    say 'all guard me'
+    wait 500
+    
+    dclicktype 'mushroom' backpack
+    wait 500
+    stop
+endif
+
+################################################################################################################
+
+if summonCreature = 1 
+    while followers = 0 or followers = 4
+    
+       if UseVengeful = 1
+            say '[VengefulSpirit'
+            wait 500    
+       endif
+       
+       while hp <= 70
+            cast 'Greater Heal'
+            waitfortarget 
+            target self
+       endwhile
+                
+       while mana < 20
+            dclicktype 'mushroom' backpack
+            wait 250
+                    
+            if mana < 20
+                skill 'Meditation'
+                wait MedWaitTime
+            endif
+        endwhile
+                
+            say 'all guard me'
+            wait 300
+                
+            cast 'Summ. Creature'
+            wait summonWaitTime
+                
+            say 'all guard me'
+            wait 300
+    
+        foreach creature in summCreatureList
+            if findtype creature ground -1 -1 5 as myPet
+                rename myPet 'CreatureBoi'
+                wait 500
+            endif
+        endfor
+    endwhile 
+endif
+
+while followers < 4 and followers >= 0
+    if UseVengeful = 1
+        say '[VengefulSpirit'
+        wait 500    
+    endif
+    
+    if UseWither = 1
+        say '[Wither'
+        wait 500
+    endif
+    
+// The below checks will handle summoning elementals set at 1 so 2 ele set at 1
+
+################################################################################################################
+//Summon Earth Elemental This checks a lot of stuff to make it work depending on different situations.
+
+    if summonEarthEle = 1
+        if not findtype 'Tankus' ground -1 -1 15
+            if hp <= 70
+                cast 'Greater Heal'
+                waitfortarget 
+                target self
+            endif
+                
+            if mana < 30
+                dclicktype 'mushroom' backpack
+                wait 250
+                    
+                if mana < 30
+                    skill 'Meditation'
+                    wait MedWaitTime
+                endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+                
+                cast 'Earth Elemental'
+                wait summonWaitTime
+                
+                if findtype 'an ancient mummy' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'Tankus'
+                        wait 500
+                    endif
+            endif
+                
+            if findtype 'an earth elemental' ground -1 -1 5 as myPet
+                if noto myPet = 'friend'
+                    rename myPet 'Tankus'
+                    wait 500
+                endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+        endif
+    elseif summonEarthEle = 2
+        if findtype 'Tankus' ground -1 -1 15
+            if hp <= 70
+                cast 'Greater Heal'
+                waitfortarget 
+                target self
+            endif
+                
+            if mana < 30
+                dclicktype 'mushroom' backpack
+                wait 250
+                    
+                if mana < 30
+                    skill 'Meditation'
+                    wait MedWaitTime
+                endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+                
+                cast 'Earth Elemental'
+                wait summonWaitTime
+                
+            if findtype 'an ancient mummy' ground -1 -1 5 as myPet
+                if noto myPet = 'friend'
+                    rename myPet 'MummyDPS'
+                    wait 500
+                endif
+            endif
+                
+            if findtype 'an earth elemental' ground -1 -1 5 as myPet
+                if noto myPet = 'friend'
+                    rename myPet 'EarthenDPS'
+                    wait 500
+                endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+        elseif not findtype 'Tankus' ground -1 -1 15
+            overhead 'No Tank Summoning Tank' 
+            wait 500
+        endif
+    elseif summonEarthEle = 3
+        if summonFireEle = 0 and summonDaemonEle = 0 and summonWaterEle = 0 and summonAirEle = 0
+            if findtype 'Tankus' ground -1 -1 15
+                if hp <= 70
+                    cast 'Greater Heal'
+                    waitfortarget 
+                    target self
+                endif
+                    
+                if mana < 30
+                    dclicktype 'mushroom' backpack
+                    wait 250
+                        
+                    if mana < 30
+                        skill 'Meditation'
+                        wait MedWaitTime
+                    endif
+                endif
+                    
+                    say 'all guard me'
+                    wait 500
+                    
+                    cast 'Earth Elemental'
+                    wait summonWaitTime
+                    
+                if findtype 'an ancient mummy' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'MummyDPS'
+                        wait 500
+                    endif
+                endif
+                    
+                if findtype 'an earth elemental' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'EarthenDPS'
+                        wait 500
+                    endif
+                endif
+                    
+                    say 'all guard me'
+                    wait 500
+            elseif not findtype 'Tankus' ground -1 -1 15
+                if hp <= 70
+                    cast 'Greater Heal'
+                    waitfortarget 
+                    target self
+                endif
+                    
+                if mana < 30
+                    dclicktype 'mushroom' backpack
+                    wait 250
+                        
+                    if mana < 30
+                        skill 'Meditation'
+                        wait MedWaitTime
+                    endif
+                endif
+                    
+                    say 'all guard me'
+                    wait 500
+                    
+                    cast 'Earth Elemental'
+                    wait summonWaitTime
+                    
+                if findtype 'an ancient mummy' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'Tankus'
+                        wait 500
+                    endif
+                endif
+                    
+                if findtype 'an earth elemental' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'Tankus'
+                        wait 500
+                    endif
+                endif
+                    
+                    say 'all guard me'
+                    wait 500
+            endif
+        endif
+    endif
+    
+################################################################################################################
+// Summons Water Elemental checks a lot of stuff to make it work depending on different situations.
+
+    if summonWaterEle = 1
+        if not findtype 'Tankus' ground -1 -1 15
+            if hp <= 70
+                cast 'Greater Heal'
+                waitfortarget 
+                target self
+            endif
+                
+            if mana < 30
+                dclicktype 'mushroom' backpack
+                wait 250
+                    
+                if mana < 30
+                    skill 'Meditation'
+                    wait MedWaitTime
+                endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+                
+                cast 'Water Elemental'
+                wait summonWaitNoBook
+                
+                if findtype 'a rag witch' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'Tankus'
+                        wait 500
+                    endif
+                endif
+                    
+                if findtype 'a water elemental' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'Tankus'
+                        wait 500
+                    endif
+                endif
+                
+                say 'all guard me'
+                wait 500
+        endif
+    elseif summonWaterEle = 2
+        if findtype 'Tankus' ground -1 -1 15
+            if hp <= 70
+                cast 'Greater Heal'
+                waitfortarget 
+                target self
+            endif
+                
+            if mana < 30
+                dclicktype 'mushroom' backpack
+                wait 250
+                    
+                if mana < 30
+                    skill 'Meditation'
+                    wait MedWaitTime
+                endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+                
+                cast 'Water Elemental'
+                wait summonWaitNoBook
+                
+                if findtype 'a rag witch' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'WitchDPS'
+                        wait 500
+                    endif
+            endif
+                
+                if findtype 'a water elemental' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'WaterDPS'
+                        wait 500
+                    endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+        elseif not findtype 'Tankus' ground -1 -1 15
+            overhead 'No Tank Summoning Tank' 
+            wait 500
+        endif
+    elseif summonWaterEle = 3
+        if summonEarthEle = 0 and summonDaemonEle = 0 and summonFireEle = 0 and summonAirEle = 0
+            if findtype 'Tankus' ground -1 -1 15
+                if hp <= 70
+                    cast 'Greater Heal'
+                    waitfortarget 
+                    target self
+                endif
+                    
+                if mana < 30
+                    dclicktype 'mushroom' backpack
+                    wait 250
+                        
+                    if mana < 30
+                        skill 'Meditation'
+                        wait MedWaitTime
+                    endif
+                endif
+                    
+                    say 'all guard me'
+                    wait 500
+                    
+                    cast 'Water Elemental'
+                    wait summonWaitNoBook
+                    
+                if findtype 'a rag witch' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'WitchDPS'
+                        wait 500
+                    endif
+                endif
+                    
+                if findtype 'a water elemental' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'WaterDPS'
+                        wait 500
+                    endif
+                endif
+                    
+                    say 'all guard me'
+                    wait 500
+            elseif not findtype 'Tankus' ground -1 -1 15
+                if hp <= 70
+                    cast 'Greater Heal'
+                    waitfortarget 
+                    target self
+                endif
+                    
+                if mana < 30
+                    dclicktype 'mushroom' backpack
+                    wait 250
+                        
+                    if mana < 30
+                        skill 'Meditation'
+                        wait MedWaitTime
+                    endif
+                endif
+                    
+                    say 'all guard me'
+                    wait 500
+                    
+                    cast 'Water Elemental'
+                    wait summonWaitNoBook
+                    
+                    if findtype 'a rag witch' ground -1 -1 5 as myPet
+                        if noto myPet = 'friend'
+                            rename myPet 'Tankus'
+                            wait 500
+                        endif
+                endif
+                    
+                if findtype 'a water elemental' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'Tankus'
+                        wait 500
+                    endif
+                endif
+                    
+                    say 'all guard me'
+                    wait 500
+            endif
+        endif
+    endif
+################################################################################################################
+// Summon Fire Elemental checks a lot of stuff to make it work depending on different situations.
+
+    if summonFireEle = 1
+        if not findtype 'Tankus' ground -1 -1 15
+            if hp <= 70
+                cast 'Greater Heal'
+                waitfortarget 
+                target self
+            endif
+                
+            if mana < 30
+                dclicktype 'mushroom' backpack
+                wait 250
+                    
+                if mana < 30
+                    skill 'Meditation'
+                    wait MedWaitTime
+                endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+                
+                cast 'Fire Elemental'
+                wait summonWaitNoBook
+                
+                if findtype 'a lich' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'Tankus'
+                        wait 500
+                    endif
+                endif
+                    
+                if findtype 'a fire elemental' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'Tankus'
+                        wait 500
+                    endif
+                endif
+                
+                say 'all guard me'
+                wait 500
+        endif
+    elseif summonFireEle = 2
+        if findtype 'Tankus' ground -1 -1 15
+            if hp <= 70
+                cast 'Greater Heal'
+                waitfortarget 
+                target self
+            endif
+                
+            if mana < 30
+                dclicktype 'mushroom' backpack
+                wait 250
+                    
+                if mana < 30
+                    skill 'Meditation'
+                    wait MedWaitTime
+                endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+                
+                cast 'Fire Elemental'
+                wait summonWaitNoBook
+                
+                if findtype 'a lich' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'LichDPS'
+                        wait 500
+                    endif
+            endif
+                
+            if findtype 'a fire elemental' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'FireDPS'
+                        wait 500
+                    endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+        elseif not findtype 'Tankus' ground -1 -1 15
+            overhead 'No Tank Summoning Tank' 
+            wait 500
+        endif
+        elseif summonFireEle = 3
+            if summonEarthEle = 0 and summonDaemonEle = 0 and summonWaterEle = 0 and summonAirEle = 0
+                if findtype 'Tankus' ground -1 -1 15
+                    if hp <= 70
+                        cast 'Greater Heal'
+                        waitfortarget 
+                        target self
+                    endif
+                        
+                    if mana < 30
+                        dclicktype 'mushroom' backpack
+                        wait 250
+                            
+                        if mana < 30
+                            skill 'Meditation'
+                            wait MedWaitTime
+                        endif
+                    endif
+                        
+                        say 'all guard me'
+                        wait 500
+                        
+                        cast 'Fire Elemental'
+                        wait summonWaitNoBook
+                        
+                        if findtype 'a lich' ground -1 -1 5 as myPet
+                        if noto myPet = 'friend'
+                            rename myPet 'LichDPS'
+                            wait 500
+                        endif
+                    endif
+                        
+                    if findtype 'a fire elemental' ground -1 -1 5 as myPet
+                        if noto myPet = 'friend'
+                        rename myPet 'FireDPS'
+                            wait 500
+                        endif
+                    endif
+                        
+                        say 'all guard me'
+                        wait 500
+                elseif not findtype 'Tankus' ground -1 -1 15
+                    if hp <= 70
+                        cast 'Greater Heal'
+                        waitfortarget 
+                        target self
+                    endif
+                        
+                    if mana < 30
+                        dclicktype 'mushroom' backpack
+                        wait 250
+                            
+                        if mana < 30
+                            skill 'Meditation'
+                            wait MedWaitTime
+                        endif
+                    endif
+                        
+                        say 'all guard me'
+                        wait 500
+                        
+                        cast 'Fire Elemental'
+                        wait summonWaitNoBook
+                        
+                        if findtype 'a lich' ground -1 -1 5 as myPet
+                            if noto myPet = 'friend'
+                                rename myPet 'Tankus'
+                                wait 500
+                            endif
+                    endif
+                        
+                    if findtype 'a fire elemental' ground -1 -1 5 as myPet
+                        if noto myPet = 'friend'
+                            rename myPet 'Tankus'
+                            wait 500
+                        endif
+                    endif
+                        
+                        say 'all guard me'
+                        wait 500
+                endif
+        endif
+    endif
+
+################################################################################################################
+// Summon Air Elemental checks a lot of stuff to make it work depending on different situations.
+
+    if summonAirEle = 1
+        if not findtype 'Tankus' ground -1 -1 15
+            if hp <= 70
+                cast 'Greater Heal'
+                waitfortarget 
+                target self
+            endif
+                
+            if mana < 30
+                dclicktype 'mushroom' backpack
+                wait 250
+                    
+                if mana < 30
+                    skill 'Meditation'
+                    wait MedWaitTime
+                endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+                
+                cast 'Air Elemental'
+                wait summonWaitNoBook
+                
+                if findtype 'a skeletal fiend' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'Tankus'
+                        wait 500
+                    endif
+                endif
+                    
+                if findtype 'an air elemental' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'Tankus'
+                        wait 500
+                    endif
+                endif
+                
+                say 'all guard me'
+                wait 500
+        endif
+    elseif summonAirEle = 2
+        if findtype 'Tankus' ground -1 -1 15
+            if hp <= 70
+                cast 'Greater Heal'
+                waitfortarget 
+                target self
+            endif
+                
+            if mana < 30
+                dclicktype 'mushroom' backpack
+                wait 250
+                    
+                if mana < 30
+                    skill 'Meditation'
+                    wait MedWaitTime
+                endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+                
+                cast 'Air Elemental'
+                wait summonWaitNoBook
+                
+                if findtype 'a skeletal fiend' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'SkeletalDPS'
+                        wait 500
+                    endif
+            endif
+                
+            if findtype 'an air elemental' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'AirDPS'
+                        wait 500
+                    endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+        elseif not findtype 'Tankus' ground -1 -1 15
+            overhead 'No Tank Summoning Tank' 
+            wait 500
+        endif
+        elseif summonAirEle = 3
+            if summonEarthEle = 0 and summonDaemonEle = 0 and summonWaterEle = 0 and summonFireEle = 0
+                if findtype 'Tankus' ground -1 -1 15
+                    if hp <= 70
+                        cast 'Greater Heal'
+                        waitfortarget 
+                        target self
+                    endif
+                        
+                    if mana < 30
+                        dclicktype 'mushroom' backpack
+                        wait 250
+                            
+                        if mana < 30
+                            skill 'Meditation'
+                            wait MedWaitTime
+                        endif
+                    endif
+                        
+                        say 'all guard me'
+                        wait 500
+                        
+                        cast 'Air Elemental'
+                        wait summonWaitNoBook
+                        
+                        if findtype 'a skeletal fiend' ground -1 -1 5 as myPet
+                        if noto myPet = 'friend'
+                            rename myPet 'SkeletalDPS'
+                            wait 500
+                        endif
+                    endif
+                        
+                    if findtype 'an air elemental' ground -1 -1 5 as myPet
+                        if noto myPet = 'friend'
+                            rename myPet 'AirDPS'
+                            wait 500
+                        endif
+                    endif
+                        
+                        say 'all guard me'
+                        wait 500
+                elseif not findtype 'Tankus' ground -1 -1 15
+                    if hp <= 70
+                        cast 'Greater Heal'
+                        waitfortarget 
+                        target self
+                    endif
+                        
+                    if mana < 30
+                        dclicktype 'mushroom' backpack
+                        wait 250
+                            
+                        if mana < 30
+                            skill 'Meditation'
+                            wait MedWaitTime
+                        endif
+                    endif
+                        
+                        say 'all guard me'
+                        wait 500
+                        
+                        cast 'Air Elemental'
+                        wait summonWaitNoBook
+                        
+                        if findtype 'a skeletal fiend' ground -1 -1 5 as myPet
+                            if noto myPet = 'friend'
+                                rename myPet 'Tankus'
+                                wait 500
+                            endif
+                    endif
+                        
+                    if findtype 'an air elemental' ground -1 -1 5 as myPet
+                        if noto myPet = 'friend'
+                            rename myPet 'Tankus'
+                            wait 500
+                        endif
+                    endif
+                        
+                        say 'all guard me'
+                        wait 500
+                endif
+        endif
+    endif
+
+    
+################################################################################################################
+// Summon Daemon This checks a lot of stuff to make it work depending on different situations.
+
+    if summonDaemonEle = 1
+        if not findtype 'Tankus' ground -1 -1 15
+            if hp <= 70
+                cast 'Greater Heal'
+                waitfortarget 
+                target self
+            endif
+                
+            if mana < 30
+                dclicktype 'mushroom' backpack
+                wait 250
+                    
+                if mana < 30
+                    skill 'Meditation'
+                    wait MedWaitTime
+                endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+                
+                cast 'Summon Daemon'
+                wait summonWaitTime
+                
+            if findtype 'a vampire thrall' ground -1 -1 5 as myPet
+                if noto myPet = 'friend'
+                    rename myPet 'Tankus'
+                    wait 500
+                endif
+            endif
+                
+            if findtype 'a daemon' ground -1 -1 5 as myPet
+                if noto myPet = 'friend'
+                    rename myPet 'Tankus'
+                    wait 500
+                endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+        endif
+    elseif summonDaemonEle = 2
+        if findtype 'Tankus' ground -1 -1 15
+            if hp <= 70
+                cast 'Greater Heal'
+                waitfortarget 
+                target self
+            endif
+                
+            if mana < 30
+                dclicktype 'mushroom' backpack
+                wait 250
+                    
+                if mana < 30
+                    skill 'Meditation'
+                    wait MedWaitTime
+                endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+                
+                cast 'Summon Daemon'
+                wait summonWaitTime
+                
+            if findtype 'a vampire thrall' ground -1 -1 5 as myPet
+                if noto myPet = 'friend'
+                rename myPet 'VampireDPS'
+                    wait 500
+                endif
+            endif
+                
+            if findtype 'a daemon' ground -1 -1 5 as myPet
+                if noto myPet = 'friend'
+                rename myPet 'DaemonDPS'
+                    wait 500
+                endif
+            endif
+                
+                say 'all guard me'
+                wait 500
+        elseif not findtype 'Tankus' ground -1 -1 15
+            overhead 'No Tank Summoning Tank' 
+            wait 500
+        endif
+    elseif summonDaemonEle = 3
+        if summonEarthEle = 0 and summonFireEle = 0 and summonWaterEle = 0 and summonAirEle = 0
+            if findtype 'Tankus' ground -1 -1 15
+                if hp <= 70
+                    cast 'Greater Heal'
+                    waitfortarget 
+                    target self
+                endif
+                    
+                if mana < 30
+                    dclicktype 'mushroom' backpack
+                    wait 250
+                        
+                    if mana < 30
+                        skill 'Meditation'
+                        wait MedWaitTime
+                    endif
+                endif
+                    
+                    say 'all guard me'
+                    wait 500
+                    
+                    cast 'Summon Daemon'
+                    wait summonWaitTime
+                    
+                if findtype 'a vampire thrall' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                    rename myPet 'VampireDPS'
+                        wait 500
+                    endif
+                endif
+                    
+                if findtype 'a daemon' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                    rename myPet 'DaemonDPS'
+                        wait 500
+                    endif
+                endif
+                    
+                    say 'all guard me'
+                    wait 500
+            elseif not findtype 'Tankus' ground -1 -1 15
+                if hp <= 70
+                    cast 'Greater Heal'
+                    waitfortarget 
+                    target self
+                endif
+                    
+                if mana < 30
+                    dclicktype 'mushroom' backpack
+                    wait 250
+                        
+                    if mana < 30
+                        skill 'Meditation'
+                        wait MedWaitTime
+                    endif
+                endif
+                    
+                    say 'all guard me'
+                    wait 500
+                    
+                    cast 'Summon Daemon'
+                    wait summonWaitTime
+                    
+                if findtype 'a vampire thrall' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'Tankus'
+                        wait 500
+                    endif
+                endif
+                    
+                if findtype 'a daemon' ground -1 -1 5 as myPet
+                    if noto myPet = 'friend'
+                        rename myPet 'Tankus'
+                        wait 500
+                    endif
+                endif
+                    
+                    say 'all guard me'
+                    wait 500
+            endif
+        endif
+    endif
+
+################################################################################################################
+loop
